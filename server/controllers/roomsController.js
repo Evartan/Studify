@@ -44,17 +44,16 @@ roomsController.openNewRoom = async (req, res, next) => {
   try {
     newRoom = await room.create({
       host, subject, restricted,
-      allowedUsers, active
+      allowedUsers: [host], active
     });
     // add new room to host user's rooms list
     const hostUser = await user.findById(host);
     hostUser.rooms.push(newRoom._id);
-    newRoom.allowedUsers.push(host);
     await hostUser.save();
 
     console.log('newRoom', newRoom)
     res.locals.newRoom = newRoom;
-    // console.log(newRoom);
+
   } catch (e) {
     console.log(e.message);
   }
@@ -128,6 +127,31 @@ roomsController.updateRoom = async (req, res, next) => {
   next();
 };
 
+
+roomsController.addPendingUser = async (req, res, next) => {
+  const roomID = req.params.room_id;
+  const userID = req.body._id;
+
+  try {
+    const currentRoom = await room.findById(roomID).exec();
+    // console.log(currentRoom);
+    if (currentRoom.pendingUsers.includes(userID)) {
+      throw new Error('user already in pending users');
+    } else {
+      await room.updateOne({ _id: roomID }, { $push: { pendingUsers: userID } }).exec();
+      console.log('inside addPendingUser controller');
+      return next();
+    }
+  } catch(err) {
+    // console.log('Error in roomsController.addPendingUser: ', err.message);
+    return next({
+      log: `Error in roomsController.addPendingUser. ${err}`,
+      message: `${err}`
+    });
+  }
+};
+
+
 roomsController.approveUser = async (req, res, next) => {
 
   // get room ID from params
@@ -149,6 +173,7 @@ roomsController.approveUser = async (req, res, next) => {
   }
 };
 
+
 roomsController.getChatHistory = async (req, res, next) => {
   const roomID = req.params.room_id;
   let chatHistory;
@@ -160,19 +185,39 @@ roomsController.getChatHistory = async (req, res, next) => {
   }
 };
 
-roomsController.addPendingUser = async (req, res, next) => {
+
+roomsController.denyPendingUserRequest = async (req, res, next) => {
   const roomID = req.params.room_id;
   const userID = req.body._id;
 
   try {
-    await room.updateOne({ _id: roomID }, { $push: { pendingUsers: userID } });
-    console.log('inside addPendingUser controller')
-
+    await room.updateOne({ _id: roomID }, { $pull: { pendingUsers: userID } });
+    console.log('denyPendingUserRequest controller')
     return next();
-  } catch(e) {
-    console.log('Error in roomsController.addPendingUser', e.message);
   }
-};
+  catch(err) {
+    return next({
+      log: `Error in roomsController.denyPendingUser. ${err}`,
+      message: `${err}`
+    });
+  }
+}
+
+roomsController.deleteApprovedUser = async (req, res, next) => {
+  const roomID = req.params.room_id;
+  const userID = req.body._id;
+
+  try {
+    await room.updateOne({ _id: roomID}, { $pull: { allowedUsers: userID }});
+    return next();
+  }
+  catch(err) {
+    return next({
+      log: `Error in roomsController.deleteApprovedUser. ${err}`,
+      message: `${err}`
+    });  
+  }
+}
 
 
 
