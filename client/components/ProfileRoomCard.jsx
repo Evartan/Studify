@@ -16,7 +16,7 @@ function ProfileRoomCard({ fetchUser, info }) {
   };
 
   async function approvePendingUser(e) {
-    console.log('user approved');
+    console.log('client invoking approvePendingUser');
     console.log(info);
     // grabbing user id
     try {
@@ -29,14 +29,34 @@ function ProfileRoomCard({ fetchUser, info }) {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(userId),
       });
+      console.log('user approved')
+      fetchUser();
 
     } catch (err) {
       console.log(err);
     }
   }
 
-  async function denyPendingUser() {
-    console.log('user denied');
+  async function denyPendingUser(e) {
+
+    // console.log('e: '. e);
+    // console.log('info: ', info);
+    try {
+      const userId = {
+        _id: e._id
+      };
+
+      const data = await fetch(`/api/rooms/deny-pending-user/${info._id}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(userId),
+      });
+      console.log('user denied');
+      fetchUser();
+    }
+    catch(err) {
+      console.log(err);
+    }
   }
 
   const closeModal = (event) => {
@@ -54,7 +74,7 @@ function ProfileRoomCard({ fetchUser, info }) {
     );
   });
 
-  
+
   // map out pending users with buttons 'approve' and 'deny' 
   const pendingUsers = info.pendingUsers.map((e, i) => {
     console.log('pendingUsers e --> ', e);
@@ -64,7 +84,7 @@ function ProfileRoomCard({ fetchUser, info }) {
         {/* <Button id="exitRoomInfo" onClick={showRoomInfo}>Back</Button>
         <Button id="exitRoomInfo" onClick={showRoomInfo}>Back</Button> */}
         <Button id="approvePendingUser" onClick={() => approvePendingUser(e)}>Approve</Button>
-        <Button id="denyPendingUser" onClick={denyPendingUser}>Deny</Button>
+        <Button id="denyPendingUser" onClick={() => denyPendingUser(e)}>Deny</Button>
       </div>
     );
   });
