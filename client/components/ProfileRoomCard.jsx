@@ -44,15 +44,17 @@ function ProfileRoomCard({ fetchUser, info }) {
     setModal(false);
   };
 
-  // const approvedUsers = info.approvedUsers.map((e, i) => {
-  //   console.log('approvedUsers e --> ', e);
-  //   return (
-  //     <div key={`approved-${i}`}>
-  //       <span >{e.username}</span>
-  //     </div>
-  //   );
-  // });
 
+  const allowedUsers = info.allowedUsers.map((e, i) => {
+    console.log('approvedUsers e --> ', e);
+    return (
+      <div key={`approved-${i}`}>
+        <span >{e.username}</span>
+      </div>
+    );
+  });
+
+  
   // map out pending users with buttons 'approve' and 'deny' 
   const pendingUsers = info.pendingUsers.map((e, i) => {
     console.log('pendingUsers e --> ', e);
@@ -72,7 +74,7 @@ function ProfileRoomCard({ fetchUser, info }) {
       {/* {console.log(info.pendingUsers[0].username)} */}
       <p><label>Subject: </label>{info.subject}</p>
       <p><label>Restricted: </label>{info.restricted ? 'Yes' : 'No'}</p>
-      <div><label>Allowed users: </label></div>
+      <div><label>Allowed users: </label>{allowedUsers}</div>
       <div><label>Pending users: </label>{pendingUsers}</div>
       <Link to='/main/room' state={{ info }}><Button variant='contained' id="open-room-btn" >Open Room</Button></Link>
 

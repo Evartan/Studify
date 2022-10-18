@@ -155,12 +155,22 @@ roomsController.addPendingUser = async (req, res, next) => {
   const userID = req.body._id;
 
   try {
-    await room.updateOne({ _id: roomID }, { $push: { pendingUsers: userID } });
-    console.log('inside addPendingUser controller')
-
-    return next();
-  } catch(e) {
-    console.log('Error in roomsController.addPendingUser', e.message);
+    const currentRoom = await room.findById(roomID).exec();
+    console.log(currentRoom)
+    if (currentRoom.pendingUsers.includes(userID)) {
+      // console.log('user already in pending users');
+      throw new Error('user already in pending users');
+    } else {
+      await room.updateOne({ _id: roomID }, { $push: { pendingUsers: userID } }).exec();
+      console.log('inside addPendingUser controller');
+      return next();
+    }
+  } catch(err) {
+    // console.log('Error in roomsController.addPendingUser: ', err.message);
+    return next({
+      log: `Error in roomsController.addPendingUser. ${err}`,
+      message: `${err}`
+    });
   }
 };
 
