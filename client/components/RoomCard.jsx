@@ -63,7 +63,7 @@ function RoomCard( { info, id, user } ) {
 
   const roomInfo = (
     <div className="roomInfo">
-      {console.log(info)}
+      {console.log('roomInfo', info)}
       <p><span>Subject:  </span>{info.subject.toUpperCase()} </p>
       <p><span>Creator:  </span>{info.host.username} </p>
       <p><span>People Inside: </span>{info.allowedUsers} </p>

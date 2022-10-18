@@ -39,6 +39,7 @@ module.exports = {
       template: 'index.html',
     }),
   ],
+  devtool: 'eval-source-map',
   devServer: {
     static: {
       publicPath: '/build',

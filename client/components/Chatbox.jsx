@@ -22,6 +22,7 @@ function Chatbox(props) {
   // indicate if message was received or sent
   const [messageHistory, setMessageHistory] = useState([]);
 
+  // anchoring last message in chatbox
   const last = useRef(null);
 
   const sendMessage = () => {
@@ -35,6 +36,9 @@ function Chatbox(props) {
       const newHistory = [...state, messageObj];
       return newHistory;
     });
+
+    // append message object as document in chat collection
+
   };
 
   // separate useEffect to join room chat on component render
@@ -56,8 +60,20 @@ function Chatbox(props) {
     });
   }, [socket]);
 
+  // useEffect to append room chat to latest message
   useEffect(() => {
     last.current?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // fetches historical chat messages for room
+  useEffect(() => {
+    const getChatHistory = async () => {
+      const messages = await fetch(`/api/rooms/chats/${props.room}`);
+      setMessageHistory(messages);
+
+      // test messageHistory state after querying from db
+      console.log(messageHistory);
+    };
   });
 
   const messages = messageHistory.map((e, i) => {

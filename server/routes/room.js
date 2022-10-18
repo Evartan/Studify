@@ -55,6 +55,23 @@ router.patch('/approve/:room_id',
   (req, res) => res.status(204).end()
 );
 
+// route to get chat history for a room
+router.get('/chats/:room_id',
+  roomsController.getChatHistory,
+  (req, res) => res.status(200).json(res.locals.chatHistory)
+);
+
+router.patch('/add-pending-user/:room_id', roomsController.addPendingUser, (req, res) => {
+  res.status(200).json('added pending user');
+});
+
+router.patch('/deny-pending-user/:room_id', roomsController.denyPendingUserRequest, (req, res) => {
+  res.status(200).json('denied pending user');
+});
+
+router.patch('/delete-approved-user/:room_id', roomsController.deleteApprovedUser, (req, res) => {
+  res.status(200).json('deleted approved user');
+})
 
 
 module.exports = router;
