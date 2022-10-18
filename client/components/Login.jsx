@@ -31,6 +31,8 @@ export default function Login({ setLoggedIn }) {
   const signUp = async () => {
     // check that fields are valid
     if (!username || !nickname || password.length < 8) return setWarning(true);
+
+    // console.log('frontend signup details --> username, password: ', username, password);
     // post new user
     await fetch('/api/users', {
       method: 'POST',
