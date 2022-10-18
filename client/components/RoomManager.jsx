@@ -20,7 +20,7 @@ function RoomManager({ fetchUser, rooms, savedRoomsProps, host }) {
   // }, [addRoomModal, addSavedRoom]);
 
   const closeModal = (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     setModal(false);
   };
 

@@ -40,7 +40,7 @@ function ProfileRoomCard({ fetchUser, info }) {
   }
 
   const closeModal = (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     setModal(false);
   };
 
