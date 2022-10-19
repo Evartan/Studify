@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import RoomEditor from './RoomEditorModal';
 
-function ProfileRoomCard({ fetchUser, info }) {
+function ProfileRoomCard({ fetchUser, info, hostId }) {
   const [editRoomModal, setModal] = useState(false);
 
   // create function to delete card via delete req and update room list (to be drilled down to Room)
@@ -89,12 +89,21 @@ function ProfileRoomCard({ fetchUser, info }) {
   };
 
 
+  function checkIfUserIsHost(e) {
+    const userId = e._id;
+    console.log('checking if user is host. e._id', userId)
+    if (userId === hostId) {
+      return true;
+    }
+    return false;
+  }
+
   const allowedUsers = info.allowedUsers.map((e, i) => {
     console.log('approvedUsers e --> ', e);
     return (
-      <div key={`approved-${i}`} style={{marginBottom: 0, marginTop: 0}}>
+      <div key={`approved-${i}`} style={{marginBottom: 0, marginTop: 0, minHeight: 25}}>
         <span >{e.username}</span>
-        <Button id="deleteApprovedUser" onClick={() => deleteApprovedUser(e)} sx={{color: '#F15412', paddingTop: 0, paddingBottom: 0}}>Delete</Button>
+        { checkIfUserIsHost(e) ? ' (host)' : <Button id="deleteApprovedUser" onClick={() => deleteApprovedUser(e)} sx={{color: '#F15412', paddingTop: 0, paddingBottom: 0, margin: 0}}>Delete</Button>}
       </div>
     );
   });
@@ -105,7 +114,7 @@ function ProfileRoomCard({ fetchUser, info }) {
     console.log('pendingUsers e --> ', e);
     return (
       <div key={i}>
-        <span >{e.username}</span>
+        <span>{e.username}</span>
         {/* <Button id="exitRoomInfo" onClick={showRoomInfo}>Back</Button>
         <Button id="exitRoomInfo" onClick={showRoomInfo}>Back</Button> */}
         <Button id="approvePendingUser" onClick={() => approvePendingUser(e)} sx={{paddingTop: 0, paddingBottom: 0}}>Approve</Button>
@@ -119,8 +128,9 @@ function ProfileRoomCard({ fetchUser, info }) {
       {/* {console.log(info.pendingUsers[0].username)} */}
       <div><label>Subject: </label>{info.subject}</div>
       <div><label>Restricted: </label>{info.restricted ? 'Yes' : 'No'}</div>
-      <div style={{paddingTop: 20}}><label>Allowed users: </label>{allowedUsers}</div>
-      <div style={{marginTop: 20}}><label>Pending users: </label>{pendingUsers}</div>
+      <div style={{paddingTop: 20, paddingBottom: 5}}><label>Allowed users: </label></div>
+      {allowedUsers}
+      <div style={{marginTop: 25}}><label>Pending users: </label>{info.pendingUsers[0] ? pendingUsers : <div style={{marginTop: 5}}>None</div>}</div>
       <div style={{marginTop: 20}}>
         <Link to='/main/room' state={{ info }}><Button variant='contained' id="open-room-btn" >Open Room</Button></Link>
 
