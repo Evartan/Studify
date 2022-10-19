@@ -25,7 +25,7 @@ function RoomManager({ fetchUser, rooms, savedRoomsProps, host }) {
   };
 
   const roomCards = rooms.map((e, i) => {
-    return <ProfileRoomCard info={e} key={i} fetchUser={fetchUser} />;
+    return <ProfileRoomCard hostId={host} info={e} key={i} fetchUser={fetchUser} />;
   });
 
   const savedRoomCards = savedRoomsProps ? savedRoomsProps.map((e, i) => {
