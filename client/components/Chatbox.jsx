@@ -38,7 +38,22 @@ function Chatbox(props) {
     });
 
     // append message object as document in chat collection
+    addMessage(messageObj);
+  };
 
+  const addMessage = async (messageObj) => {
+    console.log('inside chatbox addMessage helper fx');
+    console.log('messageObj --> ', messageObj);
+    const messages = await fetch('/api/rooms/chats', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(messageObj),
+    });
+
+    const response = await messages.json();
+    console.log('addMessage response --> ', response);
   };
 
   // separate useEffect to join room chat on component render
@@ -77,7 +92,7 @@ function Chatbox(props) {
   });
 
   const messages = messageHistory.map((e, i) => {
-    console.log('messages e --> ', e);
+    // console.log('messages e --> ', e);
 
     if (e.user === username) {
       const rightStyle = {
@@ -85,7 +100,7 @@ function Chatbox(props) {
         textAlign: 'right',
         backgroundColor: '#ededed',
         padding: '8px',
-        marginBottom: '5px'
+        marginBottom: '5px',
       };
       return (
         <div key={i} style={rightStyle} className="chatbox-msg">
@@ -99,7 +114,7 @@ function Chatbox(props) {
         textAlign: 'left',
         backgroundColor: '#ededed',
         padding: '8px',
-        marginBottom: '5px'
+        marginBottom: '5px',
       };
       return (
         <div key={i} style={leftStyle} className="chatbox-msg">
