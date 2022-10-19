@@ -1,7 +1,7 @@
 const { findById, findByIdAndUpdate } = require('../models/roomModel');
-const room = require('../models/roomModel');
-const user = require('../models/userModel');
-const chat = require('../models/chatModel');
+const Room = require('../models/roomModel');
+const User = require('../models/userModel');
+const Chat = require('../models/chatModel');
 
 const roomsController = {};
 
@@ -10,7 +10,7 @@ roomsController.getAllRooms = async (req, res, next) => {
   const { subject } = req.params;
   try {
 
-    roomslist = await room.find({ subject: subject }).where('active').equals(true).populate('host');
+    roomslist = await Room.find({ subject: subject }).where('active').equals(true).populate('host');
     // console.log(roomslist);
     res.locals.roomslist = roomslist;
 
@@ -28,7 +28,7 @@ roomsController.getAllRooms = async (req, res, next) => {
 roomsController.getRoom = async (req, res, next) => {
   try {
     // console.log('getRoom id', res.locals.roomId)
-    const roomDoc = await room.findById(res.locals.roomId);
+    const roomDoc = await Room.findById(res.locals.roomId);
     // console.log('roomdoc', roomDoc);
     res.locals.roomDoc = roomDoc;
     return next();
@@ -42,12 +42,12 @@ roomsController.openNewRoom = async (req, res, next) => {
   const { subject, restricted, allowedUsers, active } = req.body;
   let newRoom;
   try {
-    newRoom = await room.create({
+    newRoom = await Room.create({
       host, subject, restricted,
       allowedUsers: [host], active
     });
     // add new room to host user's rooms list
-    const hostUser = await user.findById(host);
+    const hostUser = await User.findById(host);
     hostUser.rooms.push(newRoom._id);
     await hostUser.save();
 
@@ -69,7 +69,7 @@ roomsController.getUserRooms = async (req, res, next) => {
   const { user_id } = req.params;
   let rooms;
   try {
-    rooms = await room.find({ host: user_id });
+    rooms = await Room.find({ host: user_id });
     res.locals.userRooms = rooms;
   } catch (e) {
     console.log(e.message);
@@ -89,11 +89,11 @@ roomsController.deleteRoom = async (req, res, next) => {
   let roomDelete;
   try {
 
-    roomDelete = await room.findOneAndDelete({ _id: id });
+    roomDelete = await Room.findOneAndDelete({ _id: id });
     res.locals.deletedRoom = roomDelete;
     // updated host users rooms list
 
-    const removedFromUser = await user.findOneAndUpdate({ _id: roomDelete.host },
+    const removedFromUser = await User.findOneAndUpdate({ _id: roomDelete.host },
       { $pull: { rows: id } },
       { new: true });
 
@@ -114,7 +114,7 @@ roomsController.updateRoom = async (req, res, next) => {
   let updatedRoom;
   try {
 
-    updatedRoom = await room.findByIdAndUpdate(id, { subject, restricted, maxallowed, allowedUsers });
+    updatedRoom = await Room.findByIdAndUpdate(id, { subject, restricted, maxallowed, allowedUsers });
     res.locals.updatedRoom = updatedRoom;
   } catch (e) {
     console.log(e.message);
@@ -134,12 +134,12 @@ roomsController.addPendingUser = async (req, res, next) => {
   const userID = req.body._id;
 
   try {
-    const currentRoom = await room.findById(roomID).exec();
+    const currentRoom = await Room.findById(roomID).exec();
     // console.log(currentRoom);
     if (currentRoom.pendingUsers.includes(userID)) {
       throw new Error('user already in pending users');
     } else {
-      await room.updateOne({ _id: roomID }, { $push: { pendingUsers: userID } }).exec();
+      await Room.updateOne({ _id: roomID }, { $push: { pendingUsers: userID } }).exec();
       console.log('inside addPendingUser controller');
       return next();
     }
@@ -163,9 +163,9 @@ roomsController.approveUser = async (req, res, next) => {
 
   // put user into approved user array
   try {
-    await room.updateOne({ _id: roomID }, { $pull: { pendingUsers: userID } });
+    await Room.updateOne({ _id: roomID }, { $pull: { pendingUsers: userID } });
 
-    await room.updateOne({ _id: roomID }, { $push: { allowedUsers: userID } });
+    await Room.updateOne({ _id: roomID }, { $push: { allowedUsers: userID } });
 
     return next();
 
@@ -179,7 +179,7 @@ roomsController.getChatHistory = async (req, res, next) => {
   const roomID = req.params.room_id;
   let chatHistory;
   try {
-    chatHistory = await chat.find({ room: roomID });
+    chatHistory = await Chat.find({ room: roomID });
     res.locals.chatHistory = chatHistory;
   } catch (e) {
     console.log(e.message);
@@ -192,7 +192,7 @@ roomsController.denyPendingUserRequest = async (req, res, next) => {
   const userID = req.body._id;
 
   try {
-    await room.updateOne({ _id: roomID }, { $pull: { pendingUsers: userID } });
+    await Room.updateOne({ _id: roomID }, { $pull: { pendingUsers: userID } });
     console.log('denyPendingUserRequest controller')
     return next();
   }
@@ -209,7 +209,7 @@ roomsController.deleteApprovedUser = async (req, res, next) => {
   const userID = req.body._id;
 
   try {
-    await room.updateOne({ _id: roomID}, { $pull: { allowedUsers: userID }});
+    await Room.updateOne({ _id: roomID}, { $pull: { allowedUsers: userID }});
     return next();
   }
   catch(err) {
@@ -218,7 +218,26 @@ roomsController.deleteApprovedUser = async (req, res, next) => {
       message: `${err}`
     });  
   }
-}
+};
+
+roomsController.postChatHistory = async (req, res, next) => {
+  const { message, user, room } = req.body;
+  console.log('roomsController.postChatHistory --> ', req.body);
+  let chatMessage;
+
+  try {
+    // chatMessage = await Chat.create({ message: message, username: user, room: room });
+
+    chatMessage = new Chat({ message: message, username: user, room: room });
+    chatMessage.save(function (e) {
+      if (e) return (e);
+    });
+    res.locals.chats = chatMessage;
+    return next();
+  } catch(e) {
+    console.log(e.message);
+  }
+};
 
 
 

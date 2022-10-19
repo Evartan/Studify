@@ -4,8 +4,6 @@ const router = express.Router();
 const roomsController = require('../controllers/roomsController');
 const cookieController = require('../controllers/cookieController');
 
-
-
 // router.get('/',
 //   cookieController.getRoomCookie,
 //   roomsController.getRoom,
@@ -55,12 +53,6 @@ router.patch('/approve/:room_id',
   (req, res) => res.status(204).end()
 );
 
-// route to get chat history for a room
-router.get('/chats/:room_id',
-  roomsController.getChatHistory,
-  (req, res) => res.status(200).json(res.locals.chatHistory)
-);
-
 router.patch('/add-pending-user/:room_id', roomsController.addPendingUser, (req, res) => {
   res.status(200).json('added pending user');
 });
@@ -73,5 +65,16 @@ router.patch('/delete-approved-user/:room_id', roomsController.deleteApprovedUse
   res.status(200).json('deleted approved user');
 });
 
+// route to get chat history for a room
+router.get('/chats/:room_id',
+  roomsController.getChatHistory,
+  (req, res) => res.status(200).json(res.locals.chatHistory)
+);
+
+
+router.post('/chats',
+  roomsController.postChatHistory,
+  (req, res) => res.status(200).json(res.locals.chats)
+);
 
 module.exports = router;

@@ -59,6 +59,30 @@ function ProfileRoomCard({ fetchUser, info }) {
     }
   }
 
+
+  async function deleteApprovedUser(e) {
+
+    // console.log('e: '. e);
+    // console.log('info: ', info);
+    try {
+      const userId = {
+        _id: e._id
+      };
+
+      const data = await fetch(`/api/rooms//delete-approved-user/${info._id}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(userId),
+      });
+      console.log('user deleted');
+      fetchUser();
+    }
+    catch(err) {
+      console.log(err);
+    }
+  }
+  
+
   const closeModal = (event) => {
     event.preventDefault();
     setModal(false);
@@ -68,8 +92,9 @@ function ProfileRoomCard({ fetchUser, info }) {
   const allowedUsers = info.allowedUsers.map((e, i) => {
     console.log('approvedUsers e --> ', e);
     return (
-      <div key={`approved-${i}`}>
+      <div key={`approved-${i}`} style={{marginBottom: 0, marginTop: 0}}>
         <span >{e.username}</span>
+        <Button id="deleteApprovedUser" onClick={() => deleteApprovedUser(e)} sx={{color: '#F15412', paddingTop: 0, paddingBottom: 0}}>Delete</Button>
       </div>
     );
   });
@@ -83,8 +108,8 @@ function ProfileRoomCard({ fetchUser, info }) {
         <span >{e.username}</span>
         {/* <Button id="exitRoomInfo" onClick={showRoomInfo}>Back</Button>
         <Button id="exitRoomInfo" onClick={showRoomInfo}>Back</Button> */}
-        <Button id="approvePendingUser" onClick={() => approvePendingUser(e)}>Approve</Button>
-        <Button id="denyPendingUser" onClick={() => denyPendingUser(e)}>Deny</Button>
+        <Button id="approvePendingUser" onClick={() => approvePendingUser(e)} sx={{paddingTop: 0, paddingBottom: 0}}>Approve</Button>
+        <Button id="denyPendingUser" onClick={() => denyPendingUser(e)} sx={{color: '#F15412', paddingTop: 0, paddingBottom: 0}}>Deny</Button>
       </div>
     );
   });
@@ -92,17 +117,19 @@ function ProfileRoomCard({ fetchUser, info }) {
   return (
     <div className='profile-room'>
       {/* {console.log(info.pendingUsers[0].username)} */}
-      <p><label>Subject: </label>{info.subject}</p>
-      <p><label>Restricted: </label>{info.restricted ? 'Yes' : 'No'}</p>
-      <div><label>Allowed users: </label>{allowedUsers}</div>
-      <div><label>Pending users: </label>{pendingUsers}</div>
-      <Link to='/main/room' state={{ info }}><Button variant='contained' id="open-room-btn" >Open Room</Button></Link>
+      <div><label>Subject: </label>{info.subject}</div>
+      <div><label>Restricted: </label>{info.restricted ? 'Yes' : 'No'}</div>
+      <div style={{paddingTop: 20}}><label>Allowed users: </label>{allowedUsers}</div>
+      <div style={{marginTop: 20}}><label>Pending users: </label>{pendingUsers}</div>
+      <div style={{marginTop: 20}}>
+        <Link to='/main/room' state={{ info }}><Button variant='contained' id="open-room-btn" >Open Room</Button></Link>
 
-      <Button variant='outlined' id="edit-room-btn" onClick={() => setModal(true)}>Edit Room</Button>
-      <Button id="delete-room-btn" onClick={() => deleteRoom(info._id)}>Delete Room</Button>
+        <Button variant='outlined' id="edit-room-btn" onClick={() => setModal(true)}>Edit Room</Button>
+        <Button id="delete-room-btn" onClick={() => deleteRoom(info._id)}>Delete Room</Button>
 
-      {editRoomModal && <RoomEditor fetchUser={fetchUser} action={'edit'} id={info._id} closeModal={closeModal} />}
+        {editRoomModal && <RoomEditor fetchUser={fetchUser} action={'edit'} id={info._id} closeModal={closeModal} />}
 
+      </div>
     </div>
   );
 }

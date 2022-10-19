@@ -13,7 +13,13 @@ usersController.getUser = async (req, res, next) => {
       user = await User.findById(res.locals.token._id)
         .populate({
           path: 'rooms',
-          populate: { path: 'pendingUsers' }
+          populate: { path: 'pendingUsers'},
+         
+        })
+        .populate({
+          path: 'rooms',
+          populate: { path: 'allowedUsers'},
+         
         })
         .populate("savedRooms");
     } else {
@@ -23,6 +29,11 @@ usersController.getUser = async (req, res, next) => {
         .populate({
           path: 'rooms',
           populate: { path: 'pendingUsers' }
+        })
+        .populate({
+          path: 'rooms',
+          populate: { path: 'allowedUsers'},
+         
         })
         .populate("savedRooms");
     }
