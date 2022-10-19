@@ -32,7 +32,7 @@ function Dashboard( ) {
   }, []);
 
   const noSubject = <p id='no-subject' className='warning'>Please select a subject!</p>;
-  const yesSubject = <RoomContainer id={loggedIn._id} subject={subject} user={loggedIn.username}/>;
+  const yesSubject = <RoomContainer id={loggedIn._id} subject={subject} user={loggedIn.username} verifyLogin={verifyLogin}/>;
 
   return (
     <div id='dashboard'>

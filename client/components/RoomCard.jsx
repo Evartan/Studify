@@ -4,7 +4,7 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function RoomCard( { info, id, user } ) {
+function RoomCard( { info, id, user, verifyLogin } ) {
 
   // const [userID, setUserID] = useState(id);
 
@@ -32,13 +32,8 @@ function RoomCard( { info, id, user } ) {
     setRoomInfoBoolean(!roomInfoBoolean);
   };
 
-  const onClick = async event => {
-    const pendingUserUrl = '/api/rooms/add-pending-user/' + info._id;
-    const options = {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({'_id': `${id}`})};
-    await fetch(pendingUserUrl, options);
-  };
-
-  useEffect(() => {
+  //verify access to a given room
+  const verifyAccess = () => {
     if(!info.restricted){
       setJoinRoom(<Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link>);
     }
@@ -51,7 +46,21 @@ function RoomCard( { info, id, user } ) {
     else{
       setJoinRoom(<Button variant='contained' onClick={onClick}>Request Access</Button>);
     }
-  }, []);
+  };
+  
+  const onClick = async event => {
+    const pendingUserUrl = '/api/rooms/add-pending-user/' + info._id;
+    const options = {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({'_id': `${id}`})};
+    await fetch(pendingUserUrl, options);
+    setJoinRoom(<Button variant='contained'>Access Requested</Button>);
+  };
+
+  useEffect(() => {
+    verifyAccess();
+    if(!id){
+      verifyLogin();
+    }
+  }, [id]);
 
   const mainRoom = (
     <div className="mainRoom" onClick={showRoomInfo}>
@@ -78,7 +87,6 @@ function RoomCard( { info, id, user } ) {
       <p><span>Restricted: </span>{info.restricted ? 'Yes' : 'No'} </p>
       <div id='main-button'>
         {joinRoom}
-        {/* <Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link> */}
         {!saved && <Button variant='contained' id="saveMyRoom" onClick={saveRoom}>Save</Button>}
         {saved && <Button variant='outlined' id="saveMyRoom">Saved!</Button>}
         <Button id="exitRoomInfo" onClick={showRoomInfo}>Back</Button>
