@@ -14,13 +14,19 @@ function Dashboard( ) {
   const [subject, setSubject] = useState('');
   const [loggedIn, setLoggedIn] = useState(true);
 
+  // state with id
+  const [userID, setUserID] = useState('');
+
+
   const verifyLogin = async () => {
     const logged = await fetch('/api/auth/verify').then(response => response.json());
-    // console.log(logged);
     setLoggedIn(logged);
+    console.log(logged);
+    setUserID(logged._id);
   };
 
   // check session if dashboard remounts
+  
   useEffect(() => {
     verifyLogin();
   }, []);
@@ -39,7 +45,7 @@ function Dashboard( ) {
             <Route path='/home' element={
               <div id='main-container'>
                 <SubjectNav subject={subject} setSubject={setSubject} />
-                {!subject ? noSubject : yesSubject}
+                {!subject ? noSubject : loggedIn ? yesSubject : noSubject}
               </div>}
             />
             <Route path='/profile' element={<Profile />} />

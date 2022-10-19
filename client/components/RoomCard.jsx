@@ -5,6 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function RoomCard( { info, id, user } ) {
+
+  // const [userID, setUserID] = useState(id);
+
   const [roomInfoBoolean, setRoomInfoBoolean] = useState(false);
   const [saved, setSaved] = useState(false);
   const [joinRoom, setJoinRoom] = useState();
@@ -30,17 +33,23 @@ function RoomCard( { info, id, user } ) {
   };
 
   const onClick = async event => {
-    // const options = {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({'_id': `${id}`})};
-    // await fetch('/add-pending-user/:'`${info._id}`, options);
+    const pendingUserUrl = '/api/rooms/add-pending-user/' + info._id;
+    const options = {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({'_id': `${id}`})};
+    await fetch(pendingUserUrl, options);
   };
 
   useEffect(() => {
-    if(info.restricted && !info.allowedUsers.includes(id)){
-      //return (<Link to='//request access' state={{ info }}><Button variant='contained'>Request Access</Button></Link>);
-      setJoinRoom(<Button variant='contained' onClick={onClick}>Request Access</Button>);
+    if(!info.restricted){
+      setJoinRoom(<Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link>);
+    }
+    else if(info.restricted && info.allowedUsers.includes(id)){
+      setJoinRoom(<Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link>);  
+    }
+    else if(info.pendingUsers.includes(id)){
+      setJoinRoom(<Button variant='contained'>Access Requested</Button>);
     }
     else{
-      setJoinRoom(<Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link>);
+      setJoinRoom(<Button variant='contained' onClick={onClick}>Request Access</Button>);
     }
   }, []);
 
@@ -63,7 +72,6 @@ function RoomCard( { info, id, user } ) {
 
   const roomInfo = (
     <div className="roomInfo">
-      {console.log('roomInfo', info)}
       <p><span>Subject:  </span>{info.subject.toUpperCase()} </p>
       <p><span>Creator:  </span>{info.host.username} </p>
       <p><span>People Inside: </span>{info.allowedUsers} </p>

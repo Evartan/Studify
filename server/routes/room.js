@@ -71,7 +71,7 @@ router.patch('/deny-pending-user/:room_id', roomsController.denyPendingUserReque
 
 router.patch('/delete-approved-user/:room_id', roomsController.deleteApprovedUser, (req, res) => {
   res.status(200).json('deleted approved user');
-})
+});
 
 
 module.exports = router;
