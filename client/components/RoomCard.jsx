@@ -1,13 +1,16 @@
 import { Button } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function RoomCard( { info, id, user } ) {
+function RoomCard( { info, id, user, verifyLogin } ) {
+
+  // const [userID, setUserID] = useState(id);
+
   const [roomInfoBoolean, setRoomInfoBoolean] = useState(false);
   const [saved, setSaved] = useState(false);
-
+  const [joinRoom, setJoinRoom] = useState();
   // const textOnSubmit = event => {
   //   event.preventDefault();
   //   setName((prevName) => {return newName})
@@ -29,6 +32,36 @@ function RoomCard( { info, id, user } ) {
     setRoomInfoBoolean(!roomInfoBoolean);
   };
 
+  //verify access to a given room
+  const verifyAccess = () => {
+    if(!info.restricted){
+      setJoinRoom(<Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link>);
+    }
+    else if(info.restricted && info.allowedUsers.includes(id)){
+      setJoinRoom(<Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link>);  
+    }
+    else if(info.pendingUsers.includes(id)){
+      setJoinRoom(<Button variant='contained'>Access Requested</Button>);
+    }
+    else{
+      setJoinRoom(<Button variant='contained' onClick={onClick}>Request Access</Button>);
+    }
+  };
+  
+  const onClick = async event => {
+    const pendingUserUrl = '/api/rooms/add-pending-user/' + info._id;
+    const options = {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({'_id': `${id}`})};
+    await fetch(pendingUserUrl, options);
+    setJoinRoom(<Button variant='contained'>Access Requested</Button>);
+  };
+
+  useEffect(() => {
+    verifyAccess();
+    if(!id){
+      verifyLogin();
+    }
+  }, [id]);
+
   const mainRoom = (
     <div className="mainRoom" onClick={showRoomInfo}>
       {/* <div > */}
@@ -48,13 +81,12 @@ function RoomCard( { info, id, user } ) {
 
   const roomInfo = (
     <div className="roomInfo">
-      {console.log('roomInfo', info)}
       <p><span>Subject:  </span>{info.subject.toUpperCase()} </p>
       <p><span>Creator:  </span>{info.host.username} </p>
       <p><span>People Inside: </span>{info.allowedUsers} </p>
       <p><span>Restricted: </span>{info.restricted ? 'Yes' : 'No'} </p>
       <div id='main-button'>
-        <Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link>
+        {joinRoom}
         {!saved && <Button variant='contained' id="saveMyRoom" onClick={saveRoom}>Save</Button>}
         {saved && <Button variant='outlined' id="saveMyRoom">Saved!</Button>}
         <Button id="exitRoomInfo" onClick={showRoomInfo}>Back</Button>

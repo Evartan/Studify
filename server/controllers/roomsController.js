@@ -129,6 +129,7 @@ roomsController.updateRoom = async (req, res, next) => {
 
 
 roomsController.addPendingUser = async (req, res, next) => {
+  
   const roomID = req.params.room_id;
   const userID = req.body._id;
 
