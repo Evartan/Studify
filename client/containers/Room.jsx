@@ -3,19 +3,21 @@ import { useLocation } from 'react-router-dom';
 import Chatbox from '../components/Chatbox';
 import DocumentEditor from '../components/DocumentEditor';
 
-function Room( ) {
+function Room() {
 
   const [hostInfo, setHost] = useState({});
   const [hostView, setHostView] = useState(false);
   const [info, setInfo] = useState({});
 
+  const [messageHistory, setMessageHistory] = useState([]);
+
   const state = useLocation().state;
 
   // save roomdoc in cookie for retrieval after redirect
   const saveRoom = async () => {
-    console.log("saving room");
-    const saved = await fetch("/api/rooms/cookie", {
-      method: "POST",
+    console.log('saving room');
+    const saved = await fetch('/api/rooms/cookie', {
+      method: 'POST',
       headers: {
         "Content-type": "application/json",
       },
@@ -63,13 +65,43 @@ function Room( ) {
     // console.log('hostview', hostView);
   }, [info]);
 
+  // WORK IN PROGRESS - 10/19 - useEffects (2) below:
+  // fetches historical chat messages for room
+  // useEffect(() => {
+  //   console.log('inside useEffect getChatHistory');
+  //   const getChatHistory = async () => {
+  //     const messages = await fetch(`/api/rooms/chats/${info._id}`);
+  //     const msgResponse = await messages.json();
+      
+  //     console.log('infoID --> ', info._id);
+  //     console.log('messages --> ', messages);
+  //     console.log('msgResponse -->', msgResponse);
+  //     setMessageHistory(msgResponse);
+
+  //   };
+  //   getChatHistory();
+  //   console.log('messageHistory after running useEffect to get chat history', messageHistory);
+  // });
+
+  // useEffect(() => {
+  // console.log('inside useEffect getChatHistory');
+  // (() => {
+  //   fetch(`/api/rooms/chats/${info._id}`)
+  //     .then(res => res.json())
+  //     .then(res => setMessageHistory(res))();
+  //   console.log('infoID --> ', info._id);
+  //   console.log('messageHistory after running useEffect to get chat history', messageHistory);
+
+  // });
+  // }, []);
+
   return (
     <div className="room-page">
       <div id="room-page-info">
         <h2>Host: {info.host && (info.host.nickname || hostInfo.nickname)} </h2>
       </div>
       <DocumentEditor hostView={hostView} />
-      <Chatbox room={state.info._id} />
+      <Chatbox room={state.info._id} chatHistory={messageHistory} />
     </div>
   );
 }

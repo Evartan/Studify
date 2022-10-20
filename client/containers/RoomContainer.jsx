@@ -18,7 +18,7 @@ function RoomContainer({ subject, id, user, verifyLogin }) {
     fetchRooms();
   }, [subject]);
 
-  console.log('user id:  ', id);
+  // console.log('user id:  ', id);
   const roomCards = rooms.map((e, i) => {
     return (<RoomCard info={e} key={JSON.stringify(e)} id={id} user={user} verifyLogin={verifyLogin}/>);
   });
