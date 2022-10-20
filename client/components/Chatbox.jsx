@@ -21,6 +21,7 @@ function Chatbox(props) {
   // message history is array of objects consisting of message body property and received which is boolean to
   // indicate if message was received or sent
   const [messageHistory, setMessageHistory] = useState([]);
+  console.log('props', props);
 
   // anchoring last message in chatbox
   const last = useRef(null);

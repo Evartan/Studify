@@ -174,19 +174,6 @@ roomsController.approveUser = async (req, res, next) => {
   }
 };
 
-
-roomsController.getChatHistory = async (req, res, next) => {
-  const roomID = req.params.room_id;
-  let chatHistory;
-  try {
-    chatHistory = await Chat.find({ room: roomID });
-    res.locals.chatHistory = chatHistory;
-  } catch (e) {
-    console.log(e.message);
-  }
-};
-
-
 roomsController.denyPendingUserRequest = async (req, res, next) => {
   const roomID = req.params.room_id;
   const userID = req.body._id;
@@ -222,16 +209,15 @@ roomsController.deleteApprovedUser = async (req, res, next) => {
 
 roomsController.postChatHistory = async (req, res, next) => {
   const { message, user, room } = req.body;
-  console.log('roomsController.postChatHistory --> ', req.body);
+  // console.log('roomsController.postChatHistory --> ', req.body);
+
+  const userDoc = await User.findOne({ username: user });
+  const userId = userDoc._id;
+
   let chatMessage;
 
   try {
-    // chatMessage = await Chat.create({ message: message, username: user, room: room });
-
-    chatMessage = new Chat({ message: message, username: user, room: room });
-    chatMessage.save(function (e) {
-      if (e) return (e);
-    });
+    chatMessage = await Chat.create({ message, user: userId, room });
     res.locals.chats = chatMessage;
     return next();
   } catch(e) {
@@ -239,6 +225,18 @@ roomsController.postChatHistory = async (req, res, next) => {
   }
 };
 
+roomsController.getChatHistory = async (req, res, next) => {
+  console.log('inside roomsController.getChatHistory');
+  const roomID = req.params.room_id;
+  let chatHistory;
+  try {
+    chatHistory = await Chat.find();
+    console.log('chatHistpry --> ', chatHistory);
+    res.locals.chatHistory = chatHistory;
+  } catch (e) {
+    console.log(e.message);
+  }
+};
 
 
 module.exports = roomsController;
