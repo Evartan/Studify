@@ -81,49 +81,39 @@ function Chatbox(props) {
     last.current?.scrollIntoView({ behavior: 'smooth' });
   });
 
-  // fetches historical chat messages for room
-  useEffect(() => {
-    const getChatHistory = async () => {
-      const messages = await fetch(`/api/rooms/chats/${props.room}`);
-      setMessageHistory(messages);
-
-      // test messageHistory state after querying from db
-      console.log(messageHistory);
+  const messages = messageHistory.map((e, i ) => {
+    // const userName = await fetch(`/api/users/${e.user}`);
+    // const userNameClean = await userName.json();
+    
+    // if (e.user === username) {
+    const rightStyle = {
+      color: '#1976d2',
+      textAlign: 'right',
+      backgroundColor: '#ededed',
+      padding: '8px',
+      marginBottom: '5px',
     };
-  });
-
-  const messages = messageHistory.map((e, i) => {
-    // console.log('messages e --> ', e);
-
-    if (e.user === username) {
-      const rightStyle = {
-        color: '#1976d2',
-        textAlign: 'right',
-        backgroundColor: '#ededed',
-        padding: '8px',
-        marginBottom: '5px',
-      };
-      return (
-        <div key={i} style={rightStyle} className="chatbox-msg">
-          <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.user}</p>
-          <p style={{ color: 'grey' }}>{e.message}</p>
-        </div>
-      );
-    } else {
-      const leftStyle = {
-        color: '#1976d2',
-        textAlign: 'left',
-        backgroundColor: '#ededed',
-        padding: '8px',
-        marginBottom: '5px',
-      };
-      return (
-        <div key={i} style={leftStyle} className="chatbox-msg">
-          <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.user}</p>
-          <p style={{ color: 'grey' }}>{e.message}</p>
-        </div>
-      );
-    }
+    return (
+      <div key={i} style={rightStyle} className="chatbox-msg">
+        <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.user}</p>
+        <p style={{ color: 'grey' }}>{e.message}</p>
+      </div>
+    );
+    // } else {
+    //   const leftStyle = {
+    //     color: '#1976d2',
+    //     textAlign: 'left',
+    //     backgroundColor: '#ededed',
+    //     padding: '8px',
+    //     marginBottom: '5px',
+    //   };
+    //   return (
+    //     <div key={i} style={leftStyle} className="chatbox-msg">
+    //       <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e[i].user}</p>
+    //       <p style={{ color: 'grey' }}>{e[i].message}</p>
+    //     </div>
+    //   );
+    // }
   });
 
   return (

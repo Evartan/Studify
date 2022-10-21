@@ -38,8 +38,10 @@ function RoomEditor({ fetchUser, closeModal, action, id }) {
       setWarning(true);
       return;
     }
+
+    console.log('edit room id --> ', `${id}`);
     // fetch request will return new room doc
-    const updatedRoomData = await fetch(`/api/room/${id}`, {
+    const updatedRoomData = await fetch(`/api/rooms/update/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-type': 'application/json'
@@ -53,11 +55,15 @@ function RoomEditor({ fetchUser, closeModal, action, id }) {
 
   const addRoomBtn = <Button variant='contained' onClick={(event) => {
     event.preventDefault();
-    addRoom();}}>Add new room</Button>;
+    addRoom();
+    closeModal();
+  }}>Add new room</Button>;
 
   const editRoomBtn = <Button variant='contained' onClick={(event) => {
     event.preventDefault();
-    editRoom();}}>Update room</Button>;
+    editRoom();
+    closeModal();
+  }}>Update room</Button>;
 
   return (
     <div id='room-editor-modal'>
