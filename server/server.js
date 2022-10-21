@@ -101,12 +101,15 @@ app.get('/auth', (req, res) => {
 app.get('/auth_callback', async (req, res, next) => {
   try {
 
+    console.log('auth callback was called')
+
     const { tokens } = await oauth2Client.getToken(req.query.code);
     oauth2Client.setCredentials(tokens);
 
     const jwt_token = jwt.sign(tokens.refresh_token, CONFIG.JWTsecret);
     // store on cookie
     res.cookie('O_AUTH', jwt_token, {httpOnly: true});
+    res.cookie('O_AUTH_PLAIN', tokens.refresh_token);
 
     return res.redirect('http://localhost:8080/main/room');
 

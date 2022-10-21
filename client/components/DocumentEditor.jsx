@@ -9,7 +9,9 @@ function DocumentEditor({ hostView }) {
 
   const [openPicker, setPicker] = useState(false);
   const [fileList, setFiles] = useState(fakeFileList);
-  const [document, setDocument] = useState({});
+  const [document, setDocument] = useState('');
+
+  console.log('document state -> ', document);
 
   const connectAuth = async () => {
     console.log('click auth');
@@ -37,7 +39,8 @@ function DocumentEditor({ hostView }) {
       <h3>Document Upload</h3>
       {openPicker && <FilePicker fileList={fileList} setDocument={setDocument} />}
       {hostView && !openPicker && <Button onClick={() => connectAuth()}>Choose a Google Drive File</Button>}
-      <GoogleDrivePicker />
+      <GoogleDrivePicker setDocument={setDocument}/>
+      {document && <><iframe src={document} width='900' height='500'></iframe> </>}
     </div>
   );
 }
