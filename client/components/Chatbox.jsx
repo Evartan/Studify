@@ -7,6 +7,9 @@ import jwt_decode from 'jwt-decode';
 const socket = io('http://localhost:3000');
 
 function Chatbox(props) {
+  const { messageHistory, setMessageHistory } = props;
+  console.log('messageHistory -->', messageHistory);
+
   //Room State
   //const [room, setRoom] = useState("");
 
@@ -20,7 +23,7 @@ function Chatbox(props) {
 
   // message history is array of objects consisting of message body property and received which is boolean to
   // indicate if message was received or sent
-  const [messageHistory, setMessageHistory] = useState([]);
+  // const [messageHistory, setMessageHistory] = useState([]);
   console.log('props', props);
 
   // anchoring last message in chatbox
@@ -80,22 +83,14 @@ function Chatbox(props) {
   useEffect(() => {
     last.current?.scrollIntoView({ behavior: 'smooth' });
   });
-
-  // fetches historical chat messages for room
-  useEffect(() => {
-    const getChatHistory = async () => {
-      const messages = await fetch(`/api/rooms/chats/${props.room}`);
-      setMessageHistory(messages);
-
-      // test messageHistory state after querying from db
-      console.log(messageHistory);
-    };
-  });
-
+  
   const messages = messageHistory.map((e, i) => {
-    // console.log('messages e --> ', e);
+    console.log('messages e --> ', e);
 
-    if (e.user === username) {
+    // const userName = await fetch(`/api/users/${e.user}`);
+    // const userNameClean = await userName.json();
+    
+    // if (e.user === username) {
       const rightStyle = {
         color: '#1976d2',
         textAlign: 'right',
@@ -109,21 +104,21 @@ function Chatbox(props) {
           <p style={{ color: 'grey' }}>{e.message}</p>
         </div>
       );
-    } else {
-      const leftStyle = {
-        color: '#1976d2',
-        textAlign: 'left',
-        backgroundColor: '#ededed',
-        padding: '8px',
-        marginBottom: '5px',
-      };
-      return (
-        <div key={i} style={leftStyle} className="chatbox-msg">
-          <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.user}</p>
-          <p style={{ color: 'grey' }}>{e.message}</p>
-        </div>
-      );
-    }
+    // } else {
+    //   const leftStyle = {
+    //     color: '#1976d2',
+    //     textAlign: 'left',
+    //     backgroundColor: '#ededed',
+    //     padding: '8px',
+    //     marginBottom: '5px',
+    //   };
+    //   return (
+    //     <div key={i} style={leftStyle} className="chatbox-msg">
+    //       <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e[i].user}</p>
+    //       <p style={{ color: 'grey' }}>{e[i].message}</p>
+    //     </div>
+    //   );
+    // }
   });
 
   return (
@@ -131,7 +126,9 @@ function Chatbox(props) {
       {console.log('chatbox renders')}
       <div id="message-container">
         <h3>Room Chat</h3>
-        <div id="message-container-inner">{messages}</div>
+        <div id="message-container-inner">
+          {messages}
+        </div>
         <div ref={last} />
       </div>
       <div id="chatbox-input">
