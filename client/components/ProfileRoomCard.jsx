@@ -84,7 +84,7 @@ function ProfileRoomCard({ fetchUser, info, hostId }) {
   
 
   const closeModal = (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     setModal(false);
   };
 
