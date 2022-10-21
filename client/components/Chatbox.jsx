@@ -91,19 +91,19 @@ function Chatbox(props) {
     // const userNameClean = await userName.json();
     
     // if (e.user === username) {
-      const rightStyle = {
-        color: '#1976d2',
-        textAlign: 'right',
-        backgroundColor: '#ededed',
-        padding: '8px',
-        marginBottom: '5px',
-      };
-      return (
-        <div key={i} style={rightStyle} className="chatbox-msg">
-          <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.user}</p>
-          <p style={{ color: 'grey' }}>{e.message}</p>
-        </div>
-      );
+    const rightStyle = {
+      color: '#1976d2',
+      textAlign: 'right',
+      backgroundColor: '#ededed',
+      padding: '8px',
+      marginBottom: '5px',
+    };
+    return (
+      <div key={i} style={rightStyle} className="chatbox-msg">
+        <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.user}</p>
+        <p style={{ color: 'grey' }}>{e.message}</p>
+      </div>
+    );
     // } else {
     //   const leftStyle = {
     //     color: '#1976d2',
