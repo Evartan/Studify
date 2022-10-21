@@ -81,6 +81,7 @@ function Chatbox(props) {
     last.current?.scrollIntoView({ behavior: 'smooth' });
   });
 
+  const messages = messageHistory.map((e, i ) => {
     // const userName = await fetch(`/api/users/${e.user}`);
     // const userNameClean = await userName.json();
     
