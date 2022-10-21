@@ -10,7 +10,7 @@ roomsController.getAllRooms = async (req, res, next) => {
   const { subject } = req.params;
   try {
 
-    roomslist = await Room.find({ subject: subject }).where('active').equals(true).populate('host');
+    roomslist = await Room.find({ subject: subject }).where('active').equals(true).populate('host').populate('allowedUsers');
     // console.log(roomslist);
     res.locals.roomslist = roomslist;
 
@@ -29,7 +29,7 @@ roomsController.getRoom = async (req, res, next) => {
   try {
     // console.log('getRoom id', res.locals.roomId)
     const roomDoc = await Room.findById(res.locals.roomId);
-    // console.log('roomdoc', roomDoc);
+    console.log('roomdoc', roomDoc);
     res.locals.roomDoc = roomDoc;
     return next();
   } catch (err) {

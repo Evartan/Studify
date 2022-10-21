@@ -5,6 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function RoomCard( { info, id, user, verifyLogin } ) {
+  console.log('roomCard component info:', info)
+  // console.log('roomCard component id:', id)
+  // console.log('roomCard component verifyLogin:', verifyLogin)
 
   // const [userID, setUserID] = useState(id);
 
@@ -79,11 +82,20 @@ function RoomCard( { info, id, user, verifyLogin } ) {
     </div>
   );
 
+  const allowedUsers = info.allowedUsers.map((e, i) => {
+    console.log('approvedUsers e --> ', e);
+    return (
+      <div key={`approved-${i}`} style={{marginBottom: 0, marginTop: 0, minHeight: 25}}>
+        <span >{e.username}</span>
+      </div>
+    );
+  });
+
   const roomInfo = (
     <div className="roomInfo">
       <p><span>Subject:  </span>{info.subject.toUpperCase()} </p>
       <p><span>Creator:  </span>{info.host.username} </p>
-      <p><span>People Inside: </span>{info.allowedUsers} </p>
+      <p><span>People Inside: </span>{allowedUsers} </p>
       <p><span>Restricted: </span>{info.restricted ? 'Yes' : 'No'} </p>
       <div id='main-button'>
         {joinRoom}
