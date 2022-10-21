@@ -231,8 +231,9 @@ roomsController.getChatHistory = async (req, res, next) => {
   let chatHistory;
   try {
     chatHistory = await Chat.find();
-    console.log('chatHistpry --> ', chatHistory);
     res.locals.chatHistory = chatHistory;
+    console.log('roomsController.getChatHistory --> ', res.locals.chatHistory);
+    return next();
   } catch (e) {
     console.log(e.message);
   }

@@ -68,7 +68,9 @@ router.patch('/delete-approved-user/:room_id', roomsController.deleteApprovedUse
 // route to get chat history for a room
 router.get('/chats/:room_id',
   roomsController.getChatHistory,
-  (req, res) => res.status(200).json(res.locals.chatHistory)
+  (req, res) => {
+    res.status(200).json(res.locals.chatHistory);
+  }
 );
 
 
