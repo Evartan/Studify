@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import useDrivePicker from 'react-google-drive-picker';
 import { Button } from '@mui/material';
-// import '../server/config';
+import '../../server/config';
 
 function GoogleDrivePicker() {
   const [openPicker, authResponse] = useDrivePicker();

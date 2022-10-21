@@ -39,7 +39,7 @@ usersController.getUser = async (req, res, next) => {
     }
 
     res.locals.user = user;
-    console.log('get req res.locals.user --> ', res.locals.user);
+    // console.log('get req res.locals.user --> ', res.locals.user);
 
     return next();
   } catch (e) {
