@@ -28,7 +28,11 @@ function Chatbox(props) {
   const sendMessage = () => {
     // emit event to server
     // console.log('msgObj roomId -->', cookies.roomId)
-    const messageObj = { message, room: props.room, user: username };
+    const decoded = jwt_decode(cookies.ssid);
+    // console.log('jwt decoded', decoded);
+
+    const messageObj = { message, room: props.room, user: decoded._id, username };
+    console.log('sendMessage messageObj --> ', messageObj);
     socket.emit('send_message', messageObj);
 
     // append message object as sent message to messageHistory for rendering
@@ -76,11 +80,11 @@ function Chatbox(props) {
   }, [socket]);
 
   // anchoring last message in chatbox
-  const last = useRef(null);
+  // const last = useRef(null);
   // useEffect to append room chat to latest message
-  useEffect(() => {
-    last.current?.scrollIntoView({ behavior: 'smooth' });
-  },[messageHistory]);
+  // useEffect(() => {
+  //   last.current?.scrollIntoView({ behavior: 'smooth' });
+  // },[messageHistory]);
 
   useEffect(() => {
     console.log('inside useEffect getChatHistory');
@@ -133,7 +137,7 @@ function Chatbox(props) {
         <h3>Room Chat</h3>
         <div id="message-container-inner">
           {messages}
-          <div ref={last} />
+          {/* <div ref={last} /> */}
         </div>
       </div>
       <div id="chatbox-input">

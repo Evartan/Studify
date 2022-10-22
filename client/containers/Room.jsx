@@ -71,7 +71,7 @@ function Room() {
         <h2>Host: {info.host && (info.host.nickname || hostInfo.nickname)} </h2>
         <h2>Subject: {info.subject}</h2>
       </div>
-      <DocumentEditor hostView={hostView} />
+      <DocumentEditor hostView={hostView} roomInfo={info}/>
       <Chatbox room={state.info._id} info={info} />
     </div>
   );

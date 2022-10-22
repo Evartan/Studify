@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import FilePicker from './FilePicker';
 import GoogleDrivePicker from './GoogleDrivePicker';
 
-function DocumentEditor({ hostView }) {
+function DocumentEditor({ hostView, roomInfo }) {
   // some fake data for rendering purposes
   const fakeFileList = ['test1', 'someDocument', 'my story'];
 
@@ -12,7 +12,9 @@ function DocumentEditor({ hostView }) {
   const [document, setDocument] = useState('');
 
   console.log('document state -> ', document);
+  console.log('documentEditor roomInfo: ', roomInfo)
 
+  
   const connectAuth = async () => {
     console.log('click auth');
     // first check to see if token is already in cookies
@@ -33,14 +35,19 @@ function DocumentEditor({ hostView }) {
     setPicker(true);
   };
 
+  useEffect(() => {
+    // store the variable documentId to be updated in here
+    setDocument(roomInfo.documentId);
+  }, [roomInfo.documentId]);
 
   return (
     <div className='doc-editor'>
       <h3>Document Upload</h3>
       {openPicker && <FilePicker fileList={fileList} setDocument={setDocument} />}
       {hostView && !openPicker && <Button onClick={() => connectAuth()}>Choose a Google Drive File</Button>}
-      <GoogleDrivePicker setDocument={setDocument}/>
-      {document && <><iframe src={document} width='900' height='500'></iframe> </>}
+      <GoogleDrivePicker setDocument={setDocument} roomInfo={roomInfo} />
+      {/* {document && <><iframe src={document} width='900' height='500'></iframe> </>} */}
+      <iframe src={document} width='900' height='500'></iframe>
     </div>
   );
 }
