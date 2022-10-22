@@ -7,6 +7,9 @@ import jwt_decode from 'jwt-decode';
 const socket = io('http://localhost:3000');
 
 function Chatbox(props) {
+  const { messageHistory, setMessageHistory } = props;
+  console.log('messageHistory --> ', messageHistory);
+
   //Room State
   //const [room, setRoom] = useState("");
 
@@ -20,11 +23,7 @@ function Chatbox(props) {
 
   // message history is array of objects consisting of message body property and received which is boolean to
   // indicate if message was received or sent
-  const [messageHistory, setMessageHistory] = useState([]);
-  console.log('props', props);
-
-  // anchoring last message in chatbox
-  const last = useRef(null);
+  // const [messageHistory, setMessageHistory] = useState([]);
 
   const sendMessage = () => {
     // emit event to server
@@ -76,15 +75,26 @@ function Chatbox(props) {
     });
   }, [socket]);
 
+  // anchoring last message in chatbox
+  const last = useRef(null);
   // useEffect to append room chat to latest message
   useEffect(() => {
     last.current?.scrollIntoView({ behavior: 'smooth' });
-  });
+  },[messageHistory]);
 
-  const messages = messageHistory.map((e, i ) => {
+  const getUsername = (userId) => {
+    const userObj = fetch(`/api/users/${userId}`).then(res => res.json());
+    return userObj;
+  };
+
+  const messages = messageHistory.map((e, i) => {
+    console.log('messages e --> ', e);
     // const userName = await fetch(`/api/users/${e.user}`);
     // const userNameClean = await userName.json();
-    
+  
+    const currUsername = getUsername(e.user);
+    console.log('currUsername -->', currUsername);
+
     // if (e.user === username) {
     const rightStyle = {
       color: '#1976d2',
@@ -121,8 +131,10 @@ function Chatbox(props) {
       {console.log('chatbox renders')}
       <div id="message-container">
         <h3>Room Chat</h3>
-        <div id="message-container-inner">{messages}</div>
-        <div ref={last} />
+        <div id="message-container-inner">
+          {messages}
+          <div ref={last} />
+        </div>
       </div>
       <div id="chatbox-input">
         <form>
