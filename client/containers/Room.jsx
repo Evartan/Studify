@@ -67,33 +67,19 @@ function Room() {
 
   // WORK IN PROGRESS - 10/19 - useEffects (2) below:
   // fetches historical chat messages for room
-  // useEffect(() => {
-  //   console.log('inside useEffect getChatHistory');
-  //   const getChatHistory = async () => {
-  //     const messages = await fetch(`/api/rooms/chats/${info._id}`);
-  //     const msgResponse = await messages.json();
-      
-  //     console.log('infoID --> ', info._id);
-  //     console.log('messages --> ', messages);
-  //     console.log('msgResponse -->', msgResponse);
-  //     setMessageHistory(msgResponse);
+  useEffect(() => {
+    console.log('inside useEffect getChatHistory');
+    const getChatHistory = async () => {
+      const messages = await fetch(`/api/rooms/chats/${info._id}`);
+      const msgResponse = await messages.json();
+      setMessageHistory(msgResponse);
+    };
+    getChatHistory();
+  },[]);
 
-  //   };
-  //   getChatHistory();
-  //   console.log('messageHistory after running useEffect to get chat history', messageHistory);
-  // });
-
-  // useEffect(() => {
-  // console.log('inside useEffect getChatHistory');
-  // (() => {
-  //   fetch(`/api/rooms/chats/${info._id}`)
-  //     .then(res => res.json())
-  //     .then(res => setMessageHistory(res))();
-  //   console.log('infoID --> ', info._id);
-  //   console.log('messageHistory after running useEffect to get chat history', messageHistory);
-
-  // });
-  // }, []);
+  useEffect(() => {
+    console.log('useEffect state change on messagehistory --> ', messageHistory);
+  }, [messageHistory]);
 
   return (
     <div className="room-page">
@@ -102,7 +88,7 @@ function Room() {
         <h2>Subject: {info.subject}</h2>
       </div>
       <DocumentEditor hostView={hostView} />
-      <Chatbox room={state.info._id} chatHistory={messageHistory} />
+      <Chatbox room={state.info._id} messageHistory={messageHistory} setMessageHistory={setMessageHistory} />
     </div>
   );
 }
