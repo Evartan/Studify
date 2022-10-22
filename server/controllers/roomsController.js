@@ -6,6 +6,27 @@ const Chat = require('../models/chatModel');
 
 const roomsController = {};
 
+
+roomsController.updateDoc = async (req, res, next) => {
+  const { id } = req.params;
+  const { documentId } = req.body;
+  let updatedRoom;
+  try {
+    updatedRoom = await Room.findByIdAndUpdate(id, {
+      documentId
+    });
+
+  } catch (e) {
+    console.log(e.message);
+  }
+
+  if (!updatedRoom) {
+    return res.status(404).json({ message: "Unable to find the room" });
+  }
+
+  next();
+};
+
 roomsController.getAllRooms = async (req, res, next) => {
   let roomslist;
   const { subject } = req.params;
@@ -209,18 +230,15 @@ roomsController.deleteApprovedUser = async (req, res, next) => {
 };
 
 roomsController.postChatHistory = async (req, res, next) => {
-  const { message, user, room } = req.body;
+  const { message, user, room, username } = req.body;
   // console.log('roomsController.postChatHistory --> ', req.body);
-
-  const username = user;
-  const userDoc = await User.findOne({ username: user });
-  const userId = userDoc._id;
-
+  console.log('postChatHistory req.body -->', req.body);
+  const userDoc = await User.findOne({ username });
   let chatMessage;
 
   try {
     // chatMessage = await Chat.create({ message, user: userId, room });
-    chatMessage = await Chat.create({ message, user: userId, username, room });
+    chatMessage = await Chat.create({ message, user, username, room });
     res.locals.chats = chatMessage;
     return next();
   } catch(e) {
@@ -229,7 +247,7 @@ roomsController.postChatHistory = async (req, res, next) => {
 };
 
 roomsController.getChatHistory = async (req, res, next) => {
-  console.log('inside roomsController.getChatHistory');
+  // console.log('inside roomsController.getChatHistory');
   const roomID = req.params.room_id;
   let chatHistory;
   try {

@@ -23,7 +23,7 @@ const roomSchema = new Schema({
   pendingUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   maxallowed: { type: Number, max: 6 },
   restricted: { type: Boolean, required: true },
-  documentId: { type: String },
+  documentId: { type: String, default: null },
 });
 
 const Room = mongoose.model('Room', roomSchema);

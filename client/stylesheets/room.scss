@@ -14,6 +14,10 @@
   h3 {
     margin-bottom: 15px;
   }
+
+  iframe {
+    width: 100%;
+  }
 }
 .file-picker {
   input {
@@ -37,7 +41,6 @@
   }
 }
 
-
 #message-container {
   margin: 30px;
   display: flex;
@@ -45,7 +48,6 @@
 
   height: 400px;
   padding: 20px;
-
 
   background-color: white;
   border: 1px solid $accent-color-light;
@@ -59,7 +61,7 @@
   #message-container-inner {
     display: flex;
     flex-direction: column;
-  
+
     height: 380px;
     padding: 20px;
 
@@ -67,4 +69,3 @@
     overflow-x: hidden;
   }
 }
-

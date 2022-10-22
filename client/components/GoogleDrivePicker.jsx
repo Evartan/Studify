@@ -5,7 +5,7 @@ import { oauth2Credentials } from '../../server/config';
 import { useCookies } from 'react-cookie';
 import jwt_decode from 'jwt-decode';
 
-function GoogleDrivePicker({ setDocument }) {
+function GoogleDrivePicker({ setDocument, roomInfo }) {
   const [openPicker, authResponse] = useDrivePicker();
 
   const [cookies, setCookie, removeCookie] = useCookies(['O_AUTH_PLAIN']);
@@ -22,15 +22,23 @@ function GoogleDrivePicker({ setDocument }) {
       showUploadFolders: true,
       supportDrives: true,
       multiselect: true,
-      callbackFunction: (data) => {
+      callbackFunction: async (data) => {
         if (data.action === 'cancel') {
-          console.log('User clicked cancel/close button')
+          console.log('User clicked cancel/close button');
         }
         console.log('data', data);
         const url = data.docs[0].url;
-        const sharedURL = url.replace('drive_web', 'sharing')
-        setDocument(sharedURL)
-        console.log('data.docs.url', sharedURL)
+        const sharedURL = url.replace('drive_web', 'sharing');
+
+        // making patch request to room document
+        await fetch(`/api/rooms/updateDoc/${roomInfo._id}`, {
+          method: 'PATCH',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ documentId: sharedURL }),
+        });
+
+        setDocument(sharedURL);
+        console.log('data.docs.url', sharedURL);
       }
     });
   };
