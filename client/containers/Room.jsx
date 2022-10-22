@@ -65,22 +65,6 @@ function Room() {
     // console.log('hostview', hostView);
   }, [info]);
 
-  // WORK IN PROGRESS - 10/19 - useEffects (2) below:
-  // fetches historical chat messages for room
-  useEffect(() => {
-    console.log('inside useEffect getChatHistory');
-    const getChatHistory = async () => {
-      const messages = await fetch(`/api/rooms/chats/${info._id}`);
-      const msgResponse = await messages.json();
-      setMessageHistory(msgResponse);
-    };
-    getChatHistory();
-  },[]);
-
-  useEffect(() => {
-    console.log('useEffect state change on messagehistory --> ', messageHistory);
-  }, [messageHistory]);
-
   return (
     <div className="room-page">
       <div id="room-page-info">
@@ -88,7 +72,7 @@ function Room() {
         <h2>Subject: {info.subject}</h2>
       </div>
       <DocumentEditor hostView={hostView} />
-      <Chatbox room={state.info._id} messageHistory={messageHistory} setMessageHistory={setMessageHistory} />
+      <Chatbox room={state.info._id} info={info} />
     </div>
   );
 }

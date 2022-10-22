@@ -7,8 +7,8 @@ import jwt_decode from 'jwt-decode';
 const socket = io('http://localhost:3000');
 
 function Chatbox(props) {
-  const { messageHistory, setMessageHistory } = props;
-  console.log('messageHistory --> ', messageHistory);
+  const { info } = props;
+  console.log('info --> ', info);
 
   //Room State
   //const [room, setRoom] = useState("");
@@ -23,7 +23,7 @@ function Chatbox(props) {
 
   // message history is array of objects consisting of message body property and received which is boolean to
   // indicate if message was received or sent
-  // const [messageHistory, setMessageHistory] = useState([]);
+  const [messageHistory, setMessageHistory] = useState([]);
 
   const sendMessage = () => {
     // emit event to server
@@ -82,48 +82,48 @@ function Chatbox(props) {
     last.current?.scrollIntoView({ behavior: 'smooth' });
   },[messageHistory]);
 
-  const getUsername = (userId) => {
-    const userObj = fetch(`/api/users/${userId}`).then(res => res.json());
-    return userObj;
-  };
+  useEffect(() => {
+    console.log('inside useEffect getChatHistory');
+    const getChatHistory = async () => {
+      const messages = await fetch(`/api/rooms/chats/${info._id}`);
+      const msgResponse = await messages.json();
+      setMessageHistory(msgResponse);
+    };
+    getChatHistory();
+  },[info, messageHistory]);
 
   const messages = messageHistory.map((e, i) => {
-    console.log('messages e --> ', e);
-    // const userName = await fetch(`/api/users/${e.user}`);
-    // const userNameClean = await userName.json();
-  
-    const currUsername = getUsername(e.user);
-    console.log('currUsername -->', currUsername);
+    // console.log('messages e --> ', e);
 
-    // if (e.user === username) {
-    const rightStyle = {
-      color: '#1976d2',
-      textAlign: 'right',
-      backgroundColor: '#ededed',
-      padding: '8px',
-      marginBottom: '5px',
-    };
-    return (
-      <div key={i} style={rightStyle} className="chatbox-msg">
-        <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.user}</p>
-        <p style={{ color: 'grey' }}>{e.message}</p>
-      </div>
-    );
-    // } else {
-    //   const leftStyle = {
-    //     color: '#1976d2',
-    //     textAlign: 'left',
-    //     backgroundColor: '#ededed',
-    //     padding: '8px',
-    //     marginBottom: '5px',
-    //   };
-    //   return (
-    //     <div key={i} style={leftStyle} className="chatbox-msg">
-    //       <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e[i].user}</p>
-    //       <p style={{ color: 'grey' }}>{e[i].message}</p>
-    //     </div>
-    //   );
-    // }
+    if (e.username === username) {
+      const rightStyle = {
+        color: '#1976d2',
+        textAlign: 'right',
+        backgroundColor: '#ededed',
+        padding: '8px',
+        marginBottom: '5px',
+      };
+      return (
+        <div key={i} style={rightStyle} className="chatbox-msg">
+          <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.username}</p>
+          <p style={{ color: 'grey' }}>{e.message}</p>
+        </div>
+      );
+    } else {
+      const leftStyle = {
+        color: '#1976d2',
+        textAlign: 'left',
+        backgroundColor: '#ededed',
+        padding: '8px',
+        marginBottom: '5px',
+      };
+      return (
+        <div key={i} style={leftStyle} className="chatbox-msg">
+          <p style={{ fontWeight: 'bold', fontSize: '14px' }}>{e.username}</p>
+          <p style={{ color: 'grey' }}>{e.message}</p>
+        </div>
+      );
+    }
   });
 
   return (

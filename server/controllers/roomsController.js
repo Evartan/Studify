@@ -1,4 +1,5 @@
 const { findById, findByIdAndUpdate } = require('../models/roomModel');
+const { find } = require('../models/chatModel'); 
 const Room = require('../models/roomModel');
 const User = require('../models/userModel');
 const Chat = require('../models/chatModel');
@@ -211,13 +212,15 @@ roomsController.postChatHistory = async (req, res, next) => {
   const { message, user, room } = req.body;
   // console.log('roomsController.postChatHistory --> ', req.body);
 
+  const username = user;
   const userDoc = await User.findOne({ username: user });
   const userId = userDoc._id;
 
   let chatMessage;
 
   try {
-    chatMessage = await Chat.create({ message, user: userId, room });
+    // chatMessage = await Chat.create({ message, user: userId, room });
+    chatMessage = await Chat.create({ message, user: userId, username, room });
     res.locals.chats = chatMessage;
     return next();
   } catch(e) {
@@ -230,7 +233,7 @@ roomsController.getChatHistory = async (req, res, next) => {
   const roomID = req.params.room_id;
   let chatHistory;
   try {
-    chatHistory = await Chat.findById(roomID).exec();
+    chatHistory = await Chat.find({ room: roomID }).exec();
     // console.log('chatHistory --> ', chatHistory);
     res.locals.chatHistory = chatHistory;
     return next();
