@@ -10,6 +10,10 @@ const cookieController = require('../controllers/cookieController');
 //   (req, res) => res.status(200).json(res.locals.room)
 // );
 
+router.patch("/updateDoc/:id", roomsController.updateDoc, (req, res) =>
+  res.status(200).json({ message: "Updated the Room doc" })
+);
+
 router.post('/',
   cookieController.verifyUser,
   roomsController.openNewRoom,

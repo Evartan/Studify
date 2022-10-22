@@ -5,6 +5,27 @@ const Chat = require('../models/chatModel');
 
 const roomsController = {};
 
+
+roomsController.updateDoc = async (req, res, next) => {
+  const { id } = req.params;
+  const { documentId } = req.body;
+  let updatedRoom;
+  try {
+    updatedRoom = await Room.findByIdAndUpdate(id, {
+      documentId
+    });
+
+  } catch (e) {
+    console.log(e.message);
+  }
+
+  if (!updatedRoom) {
+    return res.status(404).json({ message: "Unable to find the room" });
+  }
+
+  next();
+};
+
 roomsController.getAllRooms = async (req, res, next) => {
   let roomslist;
   const { subject } = req.params;
