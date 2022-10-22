@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const chatSchema = new Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  username: { type: String, required: true },
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room'},
   message: { type: String, required: true},
 });
