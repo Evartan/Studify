@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function RoomCard( { info, id, user, verifyLogin } ) {
-  console.log('roomCard component info:', info)
+  // console.log('roomCard component info:', info)
   // console.log('roomCard component id:', id)
   // console.log('roomCard component verifyLogin:', verifyLogin)
 
@@ -43,7 +43,7 @@ function RoomCard( { info, id, user, verifyLogin } ) {
     for (let i = 0; i < info.allowedUsers.length; i++) {
       allowedUsersIds.push(info.allowedUsers[i]._id);
     }
-    console.log('allowedUsersIds array', allowedUsersIds)
+    // console.log('allowedUsersIds array', allowedUsersIds)
 
     if(!info.restricted){
       setJoinRoom(<Link to='/main/room' state={{ info }}><Button variant='contained'>Join Room</Button></Link>);
@@ -91,7 +91,7 @@ function RoomCard( { info, id, user, verifyLogin } ) {
   );
 
   const allowedUsers = info.allowedUsers.map((e, i) => {
-    console.log('approvedUsers e --> ', e);
+    // console.log('approvedUsers e --> ', e);
     return (
       <span key={`approved-${i}`} style={{fontWeight: 'normal', paddingRight: 8, paddingBottom: 0}} >{e.username}</span>
     );

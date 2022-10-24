@@ -10,7 +10,7 @@ function GoogleDrivePicker({ setDocument, roomInfo }) {
 
   const [cookies, setCookie, removeCookie] = useCookies(['O_AUTH_PLAIN']);
 
-  console.log(cookies.O_AUTH_PLAIN);
+  // console.log(cookies.O_AUTH_PLAIN);
 
   const handleOpenPicker = () => {
     openPicker({

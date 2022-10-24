@@ -15,7 +15,7 @@ function Room() {
 
   // save roomdoc in cookie for retrieval after redirect
   const saveRoom = async () => {
-    console.log('saving room');
+    // console.log('saving room');
     const saved = await fetch('/api/rooms/cookie', {
       method: 'POST',
       headers: {
@@ -47,7 +47,7 @@ function Room() {
 
   // update room info
   useEffect(() => {
-    console.log('useEffect 1 runs')
+    // console.log('useEffect 1 runs')
     // if state exists then set info
     if (state) setInfo(state.info);
     // console.log('state', state)
@@ -57,7 +57,7 @@ function Room() {
 
   // set host and set cookie for room
   useEffect(() => {
-    console.log('useEffect 2 runs');
+    // console.log('useEffect 2 runs');
     if (info.host) fetchHost();
     // console.log('info', info)
     // if info was read from state then save id

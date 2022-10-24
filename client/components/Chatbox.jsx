@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@mui/material';
 import { io } from 'socket.io-client';
 import { useCookies } from 'react-cookie';
@@ -8,10 +8,7 @@ const socket = io('http://localhost:3000');
 
 function Chatbox(props) {
   const { info } = props;
-  console.log('info --> ', info);
-
-  //Room State
-  //const [room, setRoom] = useState("");
+  // console.log('info --> ', info);
 
   const [cookies, setCookie] = useCookies();
 
@@ -25,6 +22,12 @@ function Chatbox(props) {
   // indicate if message was received or sent
   const [messageHistory, setMessageHistory] = useState([]);
 
+  const getChatHistory = async () => {
+    const messages = await fetch(`/api/rooms/chats/${info._id}`);
+    const msgResponse = await messages.json();
+    setMessageHistory(msgResponse);
+  };
+
   const sendMessage = () => {
     // emit event to server
     // console.log('msgObj roomId -->', cookies.roomId)
@@ -35,19 +38,12 @@ function Chatbox(props) {
     console.log('sendMessage messageObj --> ', messageObj);
     socket.emit('send_message', messageObj);
 
-    // append message object as sent message to messageHistory for rendering
-    setMessageHistory((state) => {
-      const newHistory = [...state, messageObj];
-      return newHistory;
-    });
-
     // append message object as document in chat collection
     addMessage(messageObj);
   };
 
   const addMessage = async (messageObj) => {
     console.log('inside chatbox addMessage helper fx');
-    console.log('messageObj --> ', messageObj);
     const messages = await fetch('/api/rooms/chats', {
       method: 'POST',
       headers: {
@@ -58,19 +54,29 @@ function Chatbox(props) {
 
     const response = await messages.json();
     console.log('addMessage response --> ', response);
+
+    getChatHistory();
   };
+
+  useEffect(() => {
+    if (messageHistory.length === 0) {
+      getChatHistory();
+    }
+  });
 
   // separate useEffect to join room chat on component render
   useEffect(() => {
-    console.log('chatbox useeffect');
+    console.log("chatbox useeffect");
     // get the user info off jwt cookie
     const decoded = jwt_decode(cookies.ssid);
     setUsername(decoded.username);
-    socket.emit('join_room', props.room);
-  }, []);
+    socket.emit("join_room", props.room);
+  }, [cookies.ssid, props.room]);
+
 
   // useEffect listening to socket events containing socket listener for received messeages events to append to message history
   useEffect(() => {
+    console.log('rec message use effect runs')
     socket.on('receive_message', (data) => {
       setMessageHistory((state) => {
         const newHistory = [...state, data];
@@ -79,22 +85,6 @@ function Chatbox(props) {
     });
   }, [socket]);
 
-  // anchoring last message in chatbox
-  // const last = useRef(null);
-  // useEffect to append room chat to latest message
-  // useEffect(() => {
-  //   last.current?.scrollIntoView({ behavior: 'smooth' });
-  // },[messageHistory]);
-
-  useEffect(() => {
-    console.log('inside useEffect getChatHistory');
-    const getChatHistory = async () => {
-      const messages = await fetch(`/api/rooms/chats/${info._id}`);
-      const msgResponse = await messages.json();
-      setMessageHistory(msgResponse);
-    };
-    getChatHistory();
-  },[info, messageHistory]);
 
   const messages = messageHistory.map((e, i) => {
     // console.log('messages e --> ', e);
@@ -132,7 +122,6 @@ function Chatbox(props) {
 
   return (
     <div className="chatbox">
-      {console.log('chatbox renders')}
       <div id="message-container">
         <h3>Room Chat</h3>
         <div id="message-container-inner">

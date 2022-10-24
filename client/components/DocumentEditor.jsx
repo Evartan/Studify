@@ -11,8 +11,8 @@ function DocumentEditor({ hostView, roomInfo }) {
   const [fileList, setFiles] = useState(fakeFileList);
   const [document, setDocument] = useState('');
 
-  console.log('document state -> ', document);
-  console.log('documentEditor roomInfo: ', roomInfo)
+  // console.log('document state -> ', document);
+  // console.log('documentEditor roomInfo: ', roomInfo);
 
   
   const connectAuth = async () => {
